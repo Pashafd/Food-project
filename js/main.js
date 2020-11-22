@@ -1,26 +1,30 @@
 " use strict ";
 
-const user = "Ivan";
-alert(`Privet, ${user}`);
+let numberOfFilms = +prompt("skolko filmov yje posmotreli");
+
+let personalMovieDB = {
+  count: numberOfFilms,
+  movies: {},
+  actors: {},
+  genres: [],
+  privat: false
+};
 
 
-let incr = 10,
-    decr = 10;
+let questionOne = prompt("Odin iz poslednih posmotrenuh filmov?");
+let questionTwo = +prompt("Na skolko ocenite ego");
+let questionThre = prompt("Odin iz poslednih posmotrenuh filmov?");
+let questionFour = +prompt("Na skolko ocenite ego");
 
-   // ++incr;
-   // --decr;
-    console.log(incr++);
-    console.log(decr--);
+personalMovieDB.movies[questionOne] = questionTwo;
+personalMovieDB.movies[questionThre] = questionFour;
 
-    console.log(5 % 2);
-
+console.log(personalMovieDB);
+   
 
 
-    console.log(2 + 2 * 2 != "6");
 
-const isChecked = true,
-      isClose = false;
 
-      console.log(isChecked || isClose);
+
 
 
