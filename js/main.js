@@ -1,68 +1,84 @@
-" use strict ";
-let typesFilm = [];
-  const personalMovieDB = {
-  count: 0,
-  movies: {},
-  actors: {},
-  genres: typesFilm,
-  privat: false,
-  start: function () {
-    personalMovieDB.count = +prompt('skolko filmov posmotrel', "");
+"use strict";
 
-    while (personalMovieDB.count == "" || personalMovieDB.count == null || isNaN(personalMovieDB.count)) {
-      personalMovieDB.count = +prompt('skolko filmov posmotrel', "");
-    }
-  },
-  rememberMyFilms: function () {
-    for (let i = 0; i < 2; i++) {
-  const a = prompt("kakoy film"),
-  b = prompt('ocenochka');
 
-if (a != null && b != null && a != '' && b != '' && a.length < 50) {
-  personalMovieDB.movies[a] = b;
+const box = document.querySelector(".box");
 
-} else {
-  console.log('error');
-  i--;
-    }
-   }
-},
-writeYourGenres: function() {
-  for (let i = 0; i < 3; i++) {
-    let genre = prompt(`Vah lybimuy janr pid nomerom ${i + 1}`);
-    if(genre === "" || genre == null) {
-      console.log("vu veli ne korektnue danni")
-      i--;
-    }else {
-      personalMovieDB.genres[i] = genre;
-    }
-    }
-    personalMovieDB.genres.forEach((item, i) => {
-      console.log(`lubimuy janr ${i + 1} - eto ${item}`);
-    })
-    },
-toggleVisibleMyDB: function() {
-      if (personalMovieDB.privat) {
-        personalMovieDB.privat = false;
-      }else {
-        personalMovieDB.privat = true;
-      }
-},
-detectPersonalLvl: function () { 
-  if (personalMovieDB.count <= 10) {
-    console.log('prosmotreno dovolno malo filmov');
-  } else if (personalMovieDB.count >= 10 && personalMovieDB.count <= 30) {
-    console.log('Vu klasnuy zritel');
-  } else if (personalMovieDB.count >= 30) {
-    console.log('Vu kinoman!');
-  } else {
-    console.log('Error!!');
-  }
-    },
-    showMyDB: function (hidden) {
-       if (!hidden) {
-         console.log(personalMovieDB);
-       }
-    }
+console.log(box);
 
-};
+const btns = document.getElementsByTagName("button");
+
+console.log(btns);
+
+const circle = document.querySelectorAll(".circle");
+
+console.log(circle);
+circle.forEach(item => {
+     item.style.display = "none";
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//const box = document.getElementById('box'),
+//      btns = document.getElementsByTagName('button'),
+//      circles = document.getElementsByClassName('circle'),
+ //     wrappers = document.querySelector('.wrapper'),
+ //     hearts = wrappers.querySelectorAll('.heart'),
+ //     oneHeart = wrappers.querySelector('.heart');
+    
+ 
+
+     // box.style.backgroundColor = 'black';
+     // box.style.width = '500px  ';
+
+  //    box.style.cssText = `background-color: blue; width: 500px;`;
+
+
+      //btns[1].style.borderRadius = '100%';
+     /// circles[2].style.backgroundColor = 'red';
+
+
+    // hearts.forEach(item => {
+    //    item.style.backgroundColor = 'black';
+    // });
+
+//const div = document.createElement('div');
+//const text = document.createTextNode('tyt byv ya');
+
+//div.classList.add('black');
+
+//wrappers.prepend(div);
+//wrappers.appendChild(div);
+
+//wrappers.insertBefore(div, hearts[2]);
+
+//hearts[0].after(div);
+
+//circles[0].remove();
+//wrappers.removeChild(hearts[1]);
+
+//hearts[1].replaceWith(btns[1]);
+//wrappers.replaceChild(circles[0], hearts[0]);
+
+//div.innerHTML = '<h1>Hello world</h1>';
+
+//div.textContent = "Hello";
+
+//div.insertAdjacentHTML('afterend', '<h2>Hello</h>');
