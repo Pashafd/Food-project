@@ -5,7 +5,6 @@ window.addEventListener("DOMContentLoaded", () =>{
         tabsContent = document.querySelectorAll('.tabcontent'),
         tabsParrent = document.querySelector('.tabheader__items');
 // connect elem from html with js
-
         function hideTabsContent () {
             tabsContent.forEach(item => {
                 if (!item.classList.contains('hide')) {
@@ -46,10 +45,7 @@ tabsParrent.addEventListener('click', (event) => {
 //for elem event.tagret hideTabsConent - hide all content
 //and show correct content with animations
 
-
-
-                                                // Timer    
-
+// Timer    
 const deadLine = '2020-12-31';
 // time when timer be 0
 
@@ -167,61 +163,48 @@ prev.addEventListener('click', () => {
 
 // Modal
 
-const btnModal = document.querySelectorAll('#modal');
-const modal = document.querySelector('.modal');
-const modalClose = modal.querySelector('.modal__close');
-// get elem and put into the varibl
+const modalTrigger = document.querySelectorAll('[data-modal]'),
+        modal = document.querySelector('.modal');
 
-function showModalWindow () {
-    modal.classList.remove('hide');         //remove defolt class "hide"
-    modal.classList.add('show', 'fade');    //add "show", and animation "fade" to the modal
-    clearInterval();                        //wtf i dont know manchik
-    document.body.style.overflow = 'hidden';        //cant scroll when modal shows
-        if (modal.classList.contains('show')) {     //checkd class show if try, after click in close elem he hiden
-            modalClose.addEventListener('click', () => { hideModalWindow(); });  
-        }           
-}
-
-function hideModalWindow () {
-    modal.classList.remove('show');     //remove class "show"
-    modal.classList.add('hide');        //add clas "hide"
-
-    document.body.style.overflow = '';  // now we can scroll again
-}
-
-hideModalWindow();          // run func defolt property
-
-function showModalByScroll() {
-    if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-                                //if you scroll at down page function at run
-        showModalWindow();      //show modal
-        window.removeEventListener('scroll', showModalByScroll); //remove scroll and recursion method
-    }
-}
-
-btnModal.forEach(item => {              //becouse for two btn we use forEach 
-        item.addEventListener('click', (event) => {  //add for btn event
-            event.preventDefault();                   //close defoult propertys DOM
-            if (event.target == item) {                 // if our click is the item show modal window
-                showModalWindow();        
-            }   
-        });
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', openModal);
     });
 
-document.addEventListener('click', (event) => {     //if we click in page 
-    if (event.target === modal) {                   //and check it is not modal window
-          hideModalWindow();                        // close modal
-       }
- });         
-                
-document.addEventListener('keydown', (e) => {                           //if DOM check keydown "Escape"
-     if (e.code === "Escape" && modal.classList.contains('show')) {     // he checkd if modal window show
-            hideModalWindow();                                             //close the modal
-       }
- });
+    function closeModal() {
+        modal.classList.add('hide');
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
 
-// const modalTimerId = setTimeout(showModalWindow, 3000);                    //create run of function with time remaning 3sec
-// window.addEventListener('scroll', showModalByScroll);                       //when we in down of page run func showmodalbyscrol
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
+    }
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.getAttribute('data-close') == "") {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === "Escape" && modal.classList.contains('show')) { 
+            closeModal();
+        }
+    });
+
+    const modalTimerId = setTimeout(openModal, 300000);
+
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll);
+        }
+    }
+    window.addEventListener('scroll', showModalByScroll);
+
 
 class MenuCard {            // Create class 
     constructor (src, alt, title, descr, price, parentSelector, ...classes) {       //all argument what we needs
@@ -243,9 +226,9 @@ class MenuCard {            // Create class
     render() {                                      // put in to the html
         const element = document.createElement('div');          // create new div
 
-        if (this.classes.length === 0) {
-            this.element = 'menu__item';
-            element.classList.add(this.element);  
+        if (this.classes.length === 0) {                    // check lenght rest array
+            this.element = 'menu__item';                    //add defoult value of class
+            element.classList.add(this.element);            //add in to the html
         } else {
             this.classes.forEach(className => element.classList.add(className));  //for every item add class in rest operator
         }
@@ -271,7 +254,7 @@ new MenuCard(
     'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
     10,
     '.menu .container',
-    // 'menu__item'
+    'menu__item'
 ).render();
 
 new MenuCard(
@@ -295,4 +278,82 @@ new MenuCard(
 ).render();
 
 
+//Form
+ 
+const forms = document.querySelectorAll("form");
+const message = {
+    loading: 'img/spinner.svg',
+    succes: 'Thx! we call you',
+    fail: 'Man this is fail...'
+};
+
+forms.forEach(item => {
+    postData(item);
+});
+
+function postData (form) {
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const statusMessage = document.createElement('img');
+        statusMessage.src = message.loading;
+        statusMessage.style.cssText = `
+        display: block;
+        margin: 0 auto;
+        `;
+        form.insertAdjacentElement('afterend', statusMessage);
+
+        const request = new XMLHttpRequest();
+        request.open('POST', 'server.php');
+
+        request.setRequestHeader('Content-type', 'application/json');
+        const formData = new FormData(form);
+
+        const obj = {};
+        formData.forEach (function (value, key) {
+            obj[key] = value;
+        });
+
+        const json = JSON.stringify(obj);
+
+        request.send(json);
+
+        request.addEventListener('load', () => {
+            if(request.status === 200) {
+                console.log(request.response);
+                showThingsModal(message.succes); 
+                form.reset();
+                statusMessage.remove();
+            } else {
+                showThingsModal(message.fail);
+            }
+        });
+    });
+}
+
+
+    function showThingsModal(message) {
+        const previusModalDialog = document.querySelector(".modal__dialog");
+
+        previusModalDialog.classList.add('hide');
+        openModal();
+
+        const thanksModal = document.createElement('div');
+        thanksModal.classList.add('modal__dialog');
+        thanksModal.innerHTML = `
+            <div class="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>
+            </div>
+        `;
+        
+
+        document.querySelector('.modal').append(thanksModal);
+        setTimeout(() => {
+            thanksModal.remove();
+             previusModalDialog.classList.add('show');
+             previusModalDialog.classList.remove('hide');
+             closeModal();
+        }, 4000);
+    }
 });
