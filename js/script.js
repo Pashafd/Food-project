@@ -1,5 +1,7 @@
 "use strict";
 
+
+
 window.addEventListener("DOMContentLoaded", () =>{
     let tabs = document.querySelectorAll('.tabheader__item'),
         tabsContent = document.querySelectorAll('.tabcontent'),
@@ -246,6 +248,7 @@ class MenuCard {            // Create class
         this.parent.append(element);        // add to parent class element
     }
 }
+//Add class item
 
 new MenuCard(
     "img/tabs/vegy.jpg",
@@ -303,10 +306,6 @@ function postData (form) {
         `;
         form.insertAdjacentElement('afterend', statusMessage);
 
-        const request = new XMLHttpRequest();
-        request.open('POST', 'server.php');
-
-        request.setRequestHeader('Content-type', 'application/json');
         const formData = new FormData(form);
 
         const obj = {};
@@ -314,20 +313,37 @@ function postData (form) {
             obj[key] = value;
         });
 
-        const json = JSON.stringify(obj);
+        fetch('server.php', {
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json'
+            },    
+            body: JSON.stringify(obj)
+        })
+        .then(date => date.text())
+        .then(date => {
+            console.log(date);
+            showThingsModal(message.succes); 
+            statusMessage.remove();
+        })
+        .catch(() => {
+            showThingsModal(message.fail);
+        })
+        .finally(() => {
+            form.reset();
+        })
 
-        request.send(json);
 
-        request.addEventListener('load', () => {
-            if(request.status === 200) {
-                console.log(request.response);
-                showThingsModal(message.succes); 
-                form.reset();
-                statusMessage.remove();
-            } else {
-                showThingsModal(message.fail);
-            }
-        });
+        // request.addEventListener('load', () => {
+        //     if(request.status === 200) {
+        //         console.log(request.response);
+        //         showThingsModal(message.succes); 
+        //         form.reset();
+        //         statusMessage.remove();
+        //     } else {
+        //         showThingsModal(message.fail);
+        //     }
+        // });
     });
 }
 
@@ -356,4 +372,14 @@ function postData (form) {
              closeModal();
         }, 4000);
     }
+
+    fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: "POST",
+        body: JSON.stringify({name: 'Albertino'}),
+        headers: {
+            'Content-type': 'application/json' 
+        }
+    })
+        .then(response => response.json())
+        .then(json => console.log(json));
 });
