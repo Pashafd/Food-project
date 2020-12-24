@@ -110,58 +110,53 @@ function setClock (selector, endtime) {
 setClock('.timer', deadLine);
 //get timer work
 
-                                                                // slider
-const currentCounter = document.querySelector('#current');
-const totalCounter = document.querySelector('#total');
-const slider = document.querySelectorAll('.offer__slide');
-const next = document.querySelector('.offer__slider-next');
-const prev = document.querySelector('.offer__slider-prev');
-let i = 0;
-// chose all need elem and put into the variable
+    // slider
+let slideIndex = 1;
+const slides = document.querySelectorAll('.offer__slide'),
+    prev = document.querySelector('.offer__slider-prev'),
+    next = document.querySelector('.offer__slider-next'),
+    total = document.querySelector('#total'),
+    current = document.querySelector('#current');
 
-function changeNum (i = 1) {
-    if (i >= 1 && i <= 3) {
-    currentCounter.innerText = `0${i}`;
-    totalCounter.innerText = `0${i + 1}`;
-    } else if (i == 4) {
-        i = 1;
-        currentCounter.innerText = `0${i}`;
-        totalCounter.innerText = `0${i + 1}`;
-    } 
-}
-//togle num 
+showSlides(slideIndex);
 
-function hideSlides () {
-    slider.forEach(item => {
-        item.classList.add('hide');
-    });
+if (slides.length < 10) {
+    total.textContent = `0${slides.length}`;
+} else {
+    total.textContent = slides.length;
 }
-// hide all elem offer__slide
-function showSlides (i = 0) {
-    slider[i].classList.remove('hide');
-    slider[i].classList.add('show', 'fade');
-   changeNum(i + 1);
-}
-//remove class hide from target elem
-//add class show, fade elem target offer__slide
- hideSlides();
- showSlides();
-//run for set defolt position
-next.addEventListener('click', () => { 
-    if (i >= 0 && i < 3) {
-     i++;
-    hideSlides();
-    showSlides(i);   
-        }
- });  
-//dynamic choise slide
-prev.addEventListener('click', () => { 
-    if (i > 0 ) {
-         i--;
-    hideSlides();
-    showSlides(i);
+
+function showSlides(n) {
+    if (n > slides.length) {
+        slideIndex = 1;
     }
+    if (n < 1) {
+        slideIndex = slides.length;
+    }
+
+    slides.forEach((item) => item.style.display = 'none');
+
+    slides[slideIndex - 1].style.display = 'block'; 
+    
+    if (slides.length < 10) {
+        current.textContent =  `0${slideIndex}`;
+    } else {
+        current.textContent =  slideIndex;
+    }
+}
+
+function plusSlides (n) {
+    showSlides(slideIndex += n);
+}
+
+prev.addEventListener('click', function(){
+    plusSlides(-1);
 });
+
+next.addEventListener('click', function(){
+    plusSlides(1);
+});
+
 
 // Modal
 
@@ -250,36 +245,52 @@ class MenuCard {            // Create class
 }
 //Add class item
 
-new MenuCard(
-    "img/tabs/vegy.jpg",
-    "vegy",
-    'Меню "Фитнес"',
-    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-    10,
-    '.menu .container',
-    'menu__item'
-).render();
+const getResource = async (url) => {
+    const res = await fetch(url);
 
-new MenuCard(
-    "img/tabs/elite.jpg",
-    "elite",
-    'Меню “Премиум”',
-    'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-    15,
-    '.menu .container',
-    'menu__item'
-).render();
+    if (!res.ok) {
+        throw new Error(`Could not fetch ${url}, status ${res.status}`);
+    }
 
-new MenuCard(
-    "img/tabs/post.jpg",
-    "post",
-    'Меню "Постное"',
-    'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-    19,
-    '.menu .container',
-    'menu__item'
-).render();
+    return await res.json();
+};
 
+// getResource('http://localhost:3000/menu')
+// .then(data => {
+//     data.forEach(({img, altimg, title, descr, price}) => {
+//         new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+//     });
+// });
+
+axios.get('http://localhost:3000/menu') 
+.then(data => {
+        data.data.forEach(({img, altimg, title, descr, price}) => {
+            new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+        });
+    });
+
+// getResource('http://localhost:3000/menu')
+// .then(data => createCard(data));
+
+// function createCard(data) {
+//     data.forEach(({img, altimg, title, descr, price}) => {
+//         const element = document.createElement('div');
+
+//         element.classList.add('menu__item');
+//         element.innerHTML = `
+//         <img src=${img} alt=${altimg}>
+//                 <h3 class="menu__item-subtitle">${title}</h3>
+//                 <div class="menu__item-descr">${descr}</div>
+//                 <div class="menu__item-divider"></div>
+//                 <div class="menu__item-price">
+//                      <div class="menu__item-cost">Цена:</div>
+//                      <div class="menu__item-total"><span>${price}</span> $/day</div>
+//                 </div>
+//         `;
+
+//         document.querySelector('.menu .container').append(element);
+//     });
+// }
 
 //Form
  
@@ -291,14 +302,26 @@ const message = {
 };
 
 forms.forEach(item => {
-    postData(item);
+    bindPostData(item);
 });
+ 
+const postData = async (url, data) => {
+    const res = await fetch(url, {
+        method: "POST",
+            headers: {
+                'Content-type': 'application/json'
+            },    
+            body: data
+    });
 
-function postData (form) {
+    return await res.json();
+};
+
+function bindPostData (form) {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const statusMessage = document.createElement('img');
+        let statusMessage = document.createElement('img');
         statusMessage.src = message.loading;
         statusMessage.style.cssText = `
         display: block;
@@ -308,19 +331,11 @@ function postData (form) {
 
         const formData = new FormData(form);
 
-        const obj = {};
-        formData.forEach (function (value, key) {
-            obj[key] = value;
-        });
+        const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-        fetch('server.php', {
-            method: "POST",
-            headers: {
-                'Content-type': 'application/json'
-            },    
-            body: JSON.stringify(obj)
-        })
-        .then(date => date.text())
+
+
+        postData('http://localhost:3000/requests', json)
         .then(date => {
             console.log(date);
             showThingsModal(message.succes); 
@@ -333,17 +348,6 @@ function postData (form) {
             form.reset();
         })
 
-
-        // request.addEventListener('load', () => {
-        //     if(request.status === 200) {
-        //         console.log(request.response);
-        //         showThingsModal(message.succes); 
-        //         form.reset();
-        //         statusMessage.remove();
-        //     } else {
-        //         showThingsModal(message.fail);
-        //     }
-        // });
     });
 }
 
@@ -366,20 +370,12 @@ function postData (form) {
 
         document.querySelector('.modal').append(thanksModal);
         setTimeout(() => {
-            thanksModal.remove();
+             thanksModal.remove();
              previusModalDialog.classList.add('show');
              previusModalDialog.classList.remove('hide');
              closeModal();
         }, 4000);
     }
 
-    fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: "POST",
-        body: JSON.stringify({name: 'Albertino'}),
-        headers: {
-            'Content-type': 'application/json' 
-        }
-    })
-        .then(response => response.json())
-        .then(json => console.log(json));
+   
 });
