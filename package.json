@@ -1,7 +1,6 @@
 {
   "name": "hello-world-homework1",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,11 +11,25 @@
   },
   "author": "",
   "license": "ISC",
+  "browserslist": [
+    "> 1%"
+  ],
   "bugs": {
     "url": "https://github.com/Pashafd/hello-world/issues"
   },
   "homepage": "https://github.com/Pashafd/hello-world#readme",
   "devDependencies": {
-    "json-server": "^0.16.3"
-  }
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "babel-loader": "^8.2.2",
+    "core-js": "^3.8.2",
+    "json-server": "^0.16.3",
+    "webpack": "^5.11.1",
+    "webpack-cli": "^4.3.1"
+  },
+  "dependencies": {},
+  "keywords": [],
+  "description": ""
 }
